@@ -1,0 +1,13 @@
+$info = @()
+foreach($dvPortgroup in (Get-VirtualPortgroup -Distributed | Sort Name)){
+    $dvPortgroupInfo = New-Object PSObject -Property @{            
+        Name = $dvPortgroup.Name
+        Key = $dvPortgroup.Key
+        VlanId = $dvPortgroup.ExtensionData.Config.DefaultPortConfig.Vlan.VlanId
+        Portbinding = $dvPortgroup.Portbinding
+        NumPorts = $dvPortgroup.NumPorts
+        PortsFree = ($dvPortgroup.ExtensionData.PortKeys.count - $dvPortgroup.ExtensionData.vm.count)
+    }  
+    $info += $dvPortgroupInfo
+}
+$info | Export-Csv -UseCulture -NoTypeInformation C:\tmp\dvportgroup_info.csv
